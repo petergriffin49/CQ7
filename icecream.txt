@@ -1,0 +1,65 @@
+public static Integer icecreamParlor(int m, List<Integer> arr) {
+          
+        Integer[][] DPTable = new Integer[arr.size() + 1][m + 1];
+        int row = DPTable.length;
+        int column = DPTable[0].length;
+        
+        // creates the dynamic programming table[][]
+        // 1 = can't use
+        // 0 = use
+        // < 0 = cant' use, can use something after
+        for (int i = 1; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                DPTable[0][j] = 1;
+                int keep = arr.get(i - 1);
+                if (j - keep >= 0) {
+                    DPTable[i][j] = 0;
+                } else {
+                    int skip = DPTable[i - 1][j];
+                    if (skip <= 0) {
+                        DPTable[i][j] = skip - 1;
+                    } else {
+                        DPTable[i][j] = 1;
+                    }
+                }
+            }
+        }
+        
+        // find all possible results from the table
+        int combinations = 0;
+        for (int i = row - 1; i >= 2; i--) {
+            ArrayList<Integer> listNum = new ArrayList<>();
+            int keep = i;
+            int c = m; 
+            int current = DPTable[keep][c];
+            for (int j = 0; j < 2; j++) {
+                if (current != 1) {
+                    keep += current;
+                    listNum.add(arr.get(keep - 1));
+                    c = c - arr.get(keep - 1);
+                    if (keep > 0) {
+                        keep--;
+                    }
+                    current = DPTable[keep][c];
+                }
+            }
+
+            // if this result sums to the budget,
+            // we know it is valid combination
+            if (listNum.size() == icecreamNum){
+                int sum = 0;
+                for(int v = 0; v < listNum.size(); v++){
+                    sum += listNum.get(v);
+                }
+                if (sum == m){
+                   combinations += 1; 
+                }
+            }
+        }
+        if (combinations > 0){
+            combinations += 1;
+        }    
+            
+        //
+        return combinations;
+    }
